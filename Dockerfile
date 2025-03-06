@@ -1,19 +1,18 @@
-# Use the official Python image as base
+# Use an official Python runtime as a parent image
 FROM python:3.9
 
 # Set the working directory
 WORKDIR /app
 
-# Copy requirements and install dependencies
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+# Copy project files
+COPY . .
 
-# Copy the application code
-COPY .. .
+# Install dependencies (including Gunicorn)
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
-# Expose the port the app runs on
-EXPOSE 5000
+# Copy and set permissions for the entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-# Run the application
-
-CMD ["python", "app.py"]
+# Set the entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
