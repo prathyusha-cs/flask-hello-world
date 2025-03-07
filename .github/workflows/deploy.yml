@@ -26,12 +26,17 @@ jobs:
 
       - name: Build and Tag Docker Image
         run: |
-          docker build --platform linux/arm64 -t flask-app .
+          docker build --platform="linux/arm64" -t test . 
           docker tag flask-app:latest 850995576645.dkr.ecr.us-east-1.amazonaws.com/flask-app:latest
 
       - name: Push Docker Image to Amazon ECR
         run: |
           docker push 850995576645.dkr.ecr.us-east-1.amazonaws.com/flask-app:latest
+
+      - name: Run Database Migrations in ECS
+        run: |
+          TASK_ID=$(aws ecs list-tasks --cluster flask-cluster --family flask-with-db:9 --query "taskArns[0]" --output text)
+          aws ecs execute-command --cluster flask-cluster --task $TASK_ID --container flask-container --command "flask db upgrade" --interactive
 
       - name: Deploy to AWS ECS
         run: |
