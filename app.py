@@ -89,7 +89,7 @@ def get_main_page():
 
 @app.route("/check", methods=["GET"])
 def get_main_page():
-    return jsonify("github actions working")
+    return jsonify("github actions working!")
 
 
 if __name__ == "__main__":
