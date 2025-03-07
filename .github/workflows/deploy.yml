@@ -35,7 +35,7 @@ jobs:
 
       - name: Run Database Migrations in ECS
         run: |
-          TASK_ID=$(aws ecs list-tasks --cluster flask-cluster --family flask-with-db:9 --query "taskArns[0]" --output text)
+          TASK_ID=$(aws ecs list-tasks --cluster flask-cluster --family flask-with-db --query "taskArns[0]" --output text)
           aws ecs execute-command --cluster flask-cluster --task $TASK_ID --container flask-container --command "flask db upgrade" --interactive
 
       - name: Deploy to AWS ECS
