@@ -87,6 +87,10 @@ def get_posts():
 def get_main_page():
     return jsonify("hello")
 
+@app.route("/check", methods=["GET"])
+def get_main_page():
+    return jsonify("github actions working")
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
