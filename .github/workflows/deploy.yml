@@ -1,4 +1,4 @@
-=name: Deploy Flask App to AWS ECS
+name: Deploy Flask App to AWS ECS
 
 on:
   push:
