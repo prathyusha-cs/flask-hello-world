@@ -24,9 +24,9 @@ jobs:
         run: |
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 850995576645.dkr.ecr.us-east-1.amazonaws.com
 
-      - name: Build and Tag Docker Image
+      - name: Build and Tag Docker Image (ARM64)
         run: |
-          docker build --platform=linux/amd64 -t flask-app:latest .  
+          docker build --platform=linux/arm64 -t flask-app:latest .  
           docker tag flask-app:latest 850995576645.dkr.ecr.us-east-1.amazonaws.com/flask-app:latest
 
       - name: Push Docker Image to Amazon ECR
@@ -35,4 +35,4 @@ jobs:
 
       - name: Deploy to AWS ECS
         run: |
-          aws ecs update-service --cluster flask-cluster --service new-service --force-new-deployment
+          aws ecs update-service --cluster flask-cluster --service correct-service-name --force-new-deployment

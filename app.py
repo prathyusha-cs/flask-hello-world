@@ -88,7 +88,7 @@ def get_main_page():
     return jsonify("hello")
 
 @app.route("/check", methods=["GET"])
-def get_main_page():
+def get_gh_page():
     return jsonify("github actions working!")
 
 

@@ -1,17 +1,16 @@
-# Use an official Python runtime as a parent image
-FROM --platform=linux/amd64 python:3.9-slim
+FROM --platform=linux/arm64 python:3.9-slim
+
 # Set the working directory
 WORKDIR /app
 
 # Copy project files
 COPY . .
 
-# Install dependencies (including Gunicorn)
-RUN pip install --no-cache-dir -r requirements.txt gunicorn
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy and set permissions for the entrypoint script
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Expose the port your application runs on
+EXPOSE 8000
 
-# Set the entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+# Command to run the application with Python
+CMD ["/usr/local/bin/python", "app.py"]
