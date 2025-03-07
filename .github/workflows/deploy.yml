@@ -26,8 +26,8 @@ jobs:
 
       - name: Build and Tag Docker Image (ARM64)
         run: |
-          docker build --platform=linux/arm64 -t flask-app:latest .  
-          docker tag flask-app:latest 850995576645.dkr.ecr.us-east-1.amazonaws.com/flask-app:latest
+          docker buildx create --use
+          docker buildx build --platform=linux/arm64,linux/amd64 -t flask-app:latest . --push
 
       - name: Push Docker Image to Amazon ECR
         run: |
