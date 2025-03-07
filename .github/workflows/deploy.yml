@@ -1,4 +1,4 @@
-name: Deploy Flask App to AWS ECS
+=name: Deploy Flask App to AWS ECS
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
         run: |
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 850995576645.dkr.ecr.us-east-1.amazonaws.com
 
-      - name: Build and Tag Docker Image (Ensuring Correct Architecture)
+      - name: Build and Tag Docker Image
         run: |
           docker build --platform=linux/amd64 -t flask-app:latest .  
           docker tag flask-app:latest 850995576645.dkr.ecr.us-east-1.amazonaws.com/flask-app:latest
@@ -32,31 +32,6 @@ jobs:
       - name: Push Docker Image to Amazon ECR
         run: |
           docker push 850995576645.dkr.ecr.us-east-1.amazonaws.com/flask-app:latest
-
-      - name: Ensure ECS Uses Latest Task Definition
-        run: |
-          aws ecs update-service --cluster flask-cluster --service new-service --force-new-deployment
-
-      - name: Run Database Migrations as an ECS Task
-        run: |
-          TASK_ARN=$(aws ecs run-task --cluster flask-cluster \
-            --launch-type FARGATE \
-            --task-definition flask-with-db \
-            --network-configuration "awsvpcConfiguration={subnets=[\"subnet-0ed6008bb5c2acba3\"],securityGroups=[\"sg-0a7c80c97975f56ad\"],assignPublicIp=\"ENABLED\"}" \
-            --overrides '{
-                "containerOverrides": [
-                  {
-                    "name": "flask-container",
-                    "command": ["flask", "db", "upgrade"]
-                  }
-                ]
-            }' --query "tasks[0].taskArn" --output text)
-
-          echo "Waiting for migration task to complete..."
-          aws ecs wait tasks-stopped --cluster flask-cluster --tasks $TASK_ARN
-
-          echo "Checking migration task logs..."
-          aws logs get-log-events --log-group-name "/ecs/flask-with-db" --log-stream-name "ecs/flask-container"
 
       - name: Deploy to AWS ECS
         run: |
